@@ -1,10 +1,12 @@
 using System.Threading;
+using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 
+using AzureFuncSample.App.Attributes;
+using AzureFuncSample.App.Extensions;
 using AzureFuncSample.App.Http;
 using AzureFuncSample.App.Routes;
 using AzureFuncSample.Runtime.Entities;
@@ -16,33 +18,36 @@ namespace AzureFuncSample.App.Functions
   public static class UserFunctions
   {
     [FunctionName(nameof(GetUsersFunction))]
-    public static IActionResult GetUsersFunction(
+    public static async Task<Microsoft.AspNetCore.Mvc.IActionResult> GetUsersFunction(
       [HttpTrigger(AuthorizationLevel.Admin,
                    HttpMethodTypes.Get,
-                   Route = UserRoutes.GetUsersRoute)] HttpRequest request,
+                   Route = UserRoutes.GetUsersRoute)] HttpRequest httpRequest,
       [FromServices] IUserService userService,
-      [FromQuery] GetUsersQuery query,
+      /* [FromQuery] GetUsersQuery query, */
       CancellationToken cancellationToken)
-      => new OkObjectResult(userService.GetUsersAsync(query, cancellationToken));
+      => await userService.GetUsersAsync(/* query */ new GetUsersQuery(), cancellationToken)
+                          .ToActionResult(cancellationToken);
 
-    [FunctionName(nameof(GetUserFunction))]
-    public static IActionResult GetUserFunction(
-      [HttpTrigger(AuthorizationLevel.Admin,
-                   HttpMethodTypes.Get,
-                   Route = UserRoutes.GetUserRoute)] HttpRequest request,
-      [FromServices] IUserService userService,
-      [FromRoute] GetUserQuery query,
-      CancellationToken cancellationToken)
-      => new OkObjectResult(userService.GetUserAsync(query, cancellationToken));
+    //[FunctionName(nameof(GetUserFunction))]
+    //public static async Task<Microsoft.AspNetCore.Mvc.IActionResult> GetUserFunction(
+    //  [HttpTrigger(AuthorizationLevel.Admin,
+    //               HttpMethodTypes.Get,
+    //               Route = UserRoutes.GetUserRoute)] HttpRequest httpRequest,
+    //  [FromServices] IUserService userService,
+    //  [FromRoute] GetUserQuery query,
+    //  CancellationToken cancellationToken)
+    //  => await userService.GetUserAsync(query, cancellationToken)
+    //                      .ToActionResult(cancellationToken);
 
-    [FunctionName(nameof(PostUserFunction))]
-    public static IActionResult PostUserFunction(
-      [HttpTrigger(AuthorizationLevel.Admin,
-                   HttpMethodTypes.Post,
-                   Route = UserRoutes.PostUserRoute)] HttpRequest request,
-      [FromServices] IUserService userService,
-      [FromBody] UserEntity userEntity,
-      CancellationToken cancellationToken)
-      => new OkObjectResult(userService.CreateUserAsync(userEntity, cancellationToken));
+    //[FunctionName(nameof(PostUserFunction))]
+    //public static async Task<Microsoft.AspNetCore.Mvc.IActionResult> PostUserFunction(
+    //  [HttpTrigger(AuthorizationLevel.Admin,
+    //               HttpMethodTypes.Post,
+    //               Route = UserRoutes.PostUserRoute)] HttpRequest httpRequest,
+    //  [FromServices] IUserService userService,
+    //  [FromBody] UserEntity userEntity,
+    //  CancellationToken cancellationToken)
+    //  => await userService.CreateUserAsync(userEntity, cancellationToken)
+    //                      .ToActionResult(cancellationToken);
   }
 }

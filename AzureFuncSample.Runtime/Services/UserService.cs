@@ -10,15 +10,17 @@ namespace AzureFuncSample.Runtime.Services
 {
   public sealed class UserService : IUserService
   {
-    public Task<IEnumerable<UserEntity>> GetUsersAsync(GetUsersQuery query,
-                                                       CancellationToken cancellationToken)
-      => Task.FromResult(GetUsers(10));
+    public Task<ExecutionResult<IEnumerable<UserEntity>>> GetUsersAsync(
+      GetUsersQuery query, CancellationToken cancellationToken)
+      => Task.FromResult(ExecutionResult<IEnumerable<UserEntity>>.Success(GetUsers(10)));
 
-    public Task<UserEntity> GetUserAsync(GetUserQuery query, CancellationToken cancellationToken)
-      => Task.FromResult(GetUser(query.Id));
+    public Task<ExecutionResult<UserEntity>> GetUserAsync(
+      GetUserQuery query, CancellationToken cancellationToken)
+      => Task.FromResult(ExecutionResult<UserEntity>.Success(GetUser(query.Id)));
 
-    public Task<UserEntity> CreateUserAsync(UserEntity userEntity, CancellationToken cancellationToken)
-      => Task.FromResult(userEntity);
+    public Task<ExecutionResult<UserEntity>> CreateUserAsync(
+      UserEntity userEntity, CancellationToken cancellationToken)
+      => Task.FromResult(ExecutionResult<UserEntity>.Success(userEntity));
 
     private static IEnumerable<UserEntity> GetUsers(int userCount)
     {
