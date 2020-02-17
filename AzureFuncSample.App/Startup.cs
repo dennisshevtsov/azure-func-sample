@@ -6,12 +6,12 @@
 
 namespace AzureFuncSample.App
 {
-  using AzureFuncSample.App.Binding;
-  using AzureFuncSample.Runtime.Services;
-
   using Microsoft.Azure.WebJobs;
   using Microsoft.Azure.WebJobs.Hosting;
   using Microsoft.Extensions.DependencyInjection;
+
+  using AzureFuncSample.App.Binding;
+  using AzureFuncSample.Runtime.Services;
 
   public sealed class Startup : IWebJobsStartup
   {
