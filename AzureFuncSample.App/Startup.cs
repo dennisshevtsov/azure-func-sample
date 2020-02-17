@@ -1,16 +1,27 @@
-﻿using Microsoft.Azure.Functions.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection;
+﻿// Copyright (c) Dennis Shevtsov. All rights reserved.
+// Licensed under the Apache License, Version 2.0.
+// See License.txt in the project root for license information.
 
-using AzureFuncSample.Runtime.Services;
-
-[assembly: FunctionsStartup(typeof(AzureFuncSample.App.Startup))]
+[assembly: Microsoft.Azure.WebJobs.Hosting.WebJobsStartup(typeof(AzureFuncSample.App.Startup))]
 
 namespace AzureFuncSample.App
 {
-  public sealed class Startup : FunctionsStartup
+  using AzureFuncSample.App.Binding;
+  using AzureFuncSample.Runtime.Services;
+
+  using Microsoft.Azure.WebJobs;
+  using Microsoft.Azure.WebJobs.Hosting;
+  using Microsoft.Extensions.DependencyInjection;
+
+  public sealed class Startup : IWebJobsStartup
   {
-    public override void Configure(IFunctionsHostBuilder builder)
+    public void Configure(IWebJobsBuilder builder)
     {
+      builder.AddExtension<FromBodyExtensionConfigProvider>();
+      builder.AddExtension<FromRouteExtensionConfigProvider>();
+      builder.AddExtension<FromQueryExtensionConfigProvider>();
+      builder.AddExtension<FromServicesExtensionConfigProvider>();
+
       builder.Services.AddScoped<IUserService, UserService>();
     }
   }
