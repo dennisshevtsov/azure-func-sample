@@ -5,10 +5,10 @@
 namespace AzureFuncSample.App.Binding
 {
   using System;
-  using System.Collections.Generic;
   using System.Threading.Tasks;
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.Azure.WebJobs.Host.Bindings;
+  
+  using Microsoft.AspNetCore.Http;
+  using Microsoft.Azure.WebJobs.Host.Bindings;
   using Microsoft.Azure.WebJobs.Host.Protocols;
 
   public sealed class FromBodyBinding : IBinding
