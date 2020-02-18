@@ -28,6 +28,7 @@ namespace AzureFuncSample.App.Functions
                    Route = UserRoutes.GetUsersRoute)] HttpRequest httpRequest,
       [FromServices] IUserService userService,
       [FromQuery] GetUsersQuery query,
+      [Authorize] UserEntity authorizedUserEntity,
       CancellationToken cancellationToken)
       => await userService.GetUsersAsync(query, cancellationToken)
                           .ToActionResult(cancellationToken);

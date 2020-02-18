@@ -20,7 +20,7 @@ namespace AzureFuncSample.Runtime
 
     public string Error { get; }
 
-    public bool HasError => !string.IsNullOrWhiteSpace(Error);
+    public bool HasError => string.IsNullOrWhiteSpace(Error);
 
     public static ExecutionResult Success() => new ExecutionResult();
 

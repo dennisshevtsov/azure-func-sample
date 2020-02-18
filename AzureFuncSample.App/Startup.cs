@@ -17,6 +17,7 @@ namespace AzureFuncSample.App
   {
     public void Configure(IWebJobsBuilder builder)
     {
+      builder.AddExtension<AuthorizeExtensionConfigProvider>();
       builder.AddExtension<FromBodyExtensionConfigProvider>();
       builder.AddExtension<FromRouteExtensionConfigProvider>();
       builder.AddExtension<FromQueryExtensionConfigProvider>();

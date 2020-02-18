@@ -26,6 +26,10 @@ namespace AzureFuncSample.Runtime.Services
       UserEntity userEntity, CancellationToken cancellationToken)
       => Task.FromResult(ExecutionResult<UserEntity>.Success(userEntity));
 
+    public Task<ExecutionResult<UserEntity>> AuthorizeAsync(CancellationToken cancellationToken)
+      //=> Task.FromResult(ExecutionResult<UserEntity>.Success(GetUser(Guid.NewGuid())));
+      => Task.FromResult(ExecutionResult<UserEntity>.Fail("Unauthorized."));
+
     private static IEnumerable<UserEntity> GetUsers(int userCount)
     {
       for (var i = 0; i < userCount; ++i)
