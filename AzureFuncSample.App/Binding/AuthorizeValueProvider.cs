@@ -6,16 +6,15 @@ namespace AzureFuncSample.App.Binding
 {
   using System;
   using System.Threading.Tasks;
-  
+
   using Microsoft.AspNetCore.Http;
   using Microsoft.Azure.WebJobs.Host.Bindings;
+  using Microsoft.Extensions.DependencyInjection;
 
   using AzureFuncSample.Runtime.Entities;
-    using Microsoft.Extensions.DependencyInjection;
-    using AzureFuncSample.Runtime.Services;
-    using System.Threading;
+  using AzureFuncSample.Runtime.Services;
 
-    public sealed class AuthorizeValueProvider : IValueProvider
+  public sealed class AuthorizeValueProvider : IValueProvider
   {
     private readonly UserEntity _userEntity;
     private readonly HttpRequest _httpRequest;
