@@ -21,6 +21,14 @@ namespace AzureFuncSample.App.Functions
 
   public static class UserFunctions
   {
+    [FunctionName(nameof(GetCurrentUserFunction))]
+    public static Microsoft.AspNetCore.Mvc.IActionResult GetCurrentUserFunction(
+      [HttpTrigger(AuthorizationLevel.Admin,
+                   HttpMethodTypes.Get,
+                   Route = UserRoutes.GetCurrentUserRoute)] HttpRequest httpRequest,
+      [Authorize] UserEntity authorizedUserEntity)
+      => new Microsoft.AspNetCore.Mvc.OkObjectResult(authorizedUserEntity);
+
     [FunctionName(nameof(GetUsersFunction))]
     public static async Task<Microsoft.AspNetCore.Mvc.IActionResult> GetUsersFunction(
       [HttpTrigger(AuthorizationLevel.Admin,
@@ -28,7 +36,6 @@ namespace AzureFuncSample.App.Functions
                    Route = UserRoutes.GetUsersRoute)] HttpRequest httpRequest,
       [FromServices] IUserService userService,
       [FromQuery] GetUsersQuery query,
-      [Authorize] UserEntity authorizedUserEntity,
       CancellationToken cancellationToken)
       => await userService.GetUsersAsync(query, cancellationToken)
                           .ToActionResult(cancellationToken);

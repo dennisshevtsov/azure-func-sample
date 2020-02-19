@@ -7,17 +7,18 @@ namespace AzureFuncSample.App.Binding
   using System;
   using System.Threading.Tasks;
 
+  using Microsoft.AspNetCore.Http;
   using Microsoft.Azure.WebJobs.Host.Bindings;
   using Microsoft.Extensions.DependencyInjection;
 
   public sealed class FromServicesValueProvider : IValueProvider
   {
-    private readonly IServiceProvider _serviceProvider;
+    private readonly HttpRequest _httpRequest;
     private object _value;
 
-    public FromServicesValueProvider(IServiceProvider serviceProvider, Type serviceType)
+    public FromServicesValueProvider(HttpRequest httpRequest, Type serviceType)
     {
-      _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+      _httpRequest = httpRequest ?? throw new ArgumentNullException(nameof(httpRequest));
       Type = serviceType ?? throw new ArgumentNullException(nameof(serviceType));
     }
 
@@ -29,8 +30,9 @@ namespace AzureFuncSample.App.Binding
 
     public Type Type { get; }
 
-    public Task<object> GetValueAsync() => Task.FromResult(_serviceProvider.GetRequiredService(Type));
+    public Task<object> GetValueAsync()
+      => Task.FromResult(_httpRequest.HttpContext.RequestServices.GetRequiredService(Type));
 
-    public string ToInvokeString() => _value?.ToString() ?? string.Empty;
+    public string ToInvokeString() => "service";
   }
 }

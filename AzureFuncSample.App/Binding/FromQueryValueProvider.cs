@@ -5,37 +5,44 @@
 namespace AzureFuncSample.App.Binding
 {
   using System;
-  using System.Collections.Generic;
+  using System.Linq;
   using System.Threading.Tasks;
-
+  
+  using Microsoft.AspNetCore.Http;
   using Microsoft.Azure.WebJobs.Host.Bindings;
   using Newtonsoft.Json.Linq;
 
   public sealed class FromQueryValueProvider : IValueProvider
   {
-    private readonly IReadOnlyDictionary<string, string> _queryParams;
+    private readonly HttpRequest _httpRequest;
     private readonly object _value;
 
-    public FromQueryValueProvider(IReadOnlyDictionary<string, string> queryParams, Type type)
+    public FromQueryValueProvider(HttpRequest httpRequest, Type type)
     {
-      _queryParams = queryParams ?? throw new ArgumentNullException(nameof(queryParams));
+      _httpRequest = httpRequest ?? throw new ArgumentNullException(nameof(httpRequest));
       Type = type ?? throw new ArgumentNullException(nameof(type));
     }
 
     public FromQueryValueProvider(object value)
     {
       _value = value ?? throw new ArgumentNullException(nameof(value));
+      Type = value.GetType();
     }
 
     public Type Type { get; }
 
     public Task<object> GetValueAsync()
     {
+      if (_value != null)
+      {
+        return Task.FromResult(_value);
+      }
+
       var json = new JObject();
 
-      foreach (var queryParam in _queryParams)
+      foreach (var queryParam in _httpRequest.Query)
       {
-        json.Add(queryParam.Key, queryParam.Value);
+        json.Add(queryParam.Key, queryParam.Value.First());
       }
 
       var instance = json.ToObject(Type);

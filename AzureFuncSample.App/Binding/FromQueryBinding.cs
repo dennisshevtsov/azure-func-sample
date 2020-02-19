@@ -5,7 +5,6 @@
 namespace AzureFuncSample.App.Binding
 {
   using System;
-  using System.Collections.Generic;
   using System.Threading.Tasks;
 
   using Microsoft.Azure.WebJobs.Host.Bindings;
@@ -16,20 +15,25 @@ namespace AzureFuncSample.App.Binding
     private readonly Type _queryParamsObjectType;
 
     public FromQueryBinding(Type queryParamsObjectType)
-    {
-      _queryParamsObjectType = queryParamsObjectType ?? throw new ArgumentNullException(nameof(queryParamsObjectType));
-    }
+        => _queryParamsObjectType = queryParamsObjectType ?? throw new ArgumentNullException(nameof(queryParamsObjectType));
 
     public bool FromAttribute => true;
 
     public Task<IValueProvider> BindAsync(object value, ValueBindingContext context)
-      => Task.FromResult<IValueProvider>(new FromQueryValueProvider(value));
+    {
+      if (value != null && value.GetType() == _queryParamsObjectType)
+      {
+        return Task.FromResult<IValueProvider>(new FromQueryValueProvider(value));
+      }
+
+      throw new InvalidOperationException();
+    }
 
     public Task<IValueProvider> BindAsync(BindingContext context)
     {
-      if (context.BindingData["Query"] is IReadOnlyDictionary<string, string> queryParams)
+      if (context.TryGetHttpRequest(out var httpRequest))
       {
-        return Task.FromResult<IValueProvider>(new FromQueryValueProvider(queryParams, _queryParamsObjectType));
+        return Task.FromResult<IValueProvider>(new FromQueryValueProvider(httpRequest, _queryParamsObjectType));
       }
 
       throw new InvalidOperationException();

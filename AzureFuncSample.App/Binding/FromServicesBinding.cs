@@ -7,7 +7,6 @@ namespace AzureFuncSample.App.Binding
   using System;
   using System.Threading.Tasks;
 
-  using Microsoft.AspNetCore.Http;
   using Microsoft.Azure.WebJobs.Host.Bindings;
   using Microsoft.Azure.WebJobs.Host.Protocols;
 
@@ -16,21 +15,25 @@ namespace AzureFuncSample.App.Binding
     private readonly Type _serviceType;
 
     public FromServicesBinding(Type serviceType)
-    {
-      _serviceType = serviceType ?? throw new ArgumentNullException(nameof(serviceType));
-    }
+      => _serviceType = serviceType ?? throw new ArgumentNullException(nameof(serviceType));
 
     public bool FromAttribute => true;
 
     public Task<IValueProvider> BindAsync(object value, ValueBindingContext context)
-      => Task.FromResult<IValueProvider>(new FromServicesValueProvider(value));
+    {
+      if (value != null && value.GetType() == _serviceType)
+      {
+        return Task.FromResult<IValueProvider>(new FromServicesValueProvider(value));
+      }
+
+      throw new InvalidOperationException();
+    }
 
     public Task<IValueProvider> BindAsync(BindingContext context)
     {
-      if (context.BindingData.TryGetValue("$request", out var httpRequestObject) &&
-          httpRequestObject is HttpRequest httpRequest)
+      if (context.TryGetHttpRequest(out var httpRequest))
       {
-        return Task.FromResult<IValueProvider>(new FromServicesValueProvider(httpRequest.HttpContext.RequestServices, _serviceType));
+        return Task.FromResult<IValueProvider>(new FromServicesValueProvider(httpRequest, _serviceType));
       }
 
       throw new InvalidOperationException();

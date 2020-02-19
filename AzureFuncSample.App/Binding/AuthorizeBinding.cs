@@ -7,7 +7,6 @@ namespace AzureFuncSample.App.Binding
   using System;
   using System.Threading.Tasks;
   
-  using Microsoft.AspNetCore.Http;
   using Microsoft.Azure.WebJobs.Host.Bindings;
   using Microsoft.Azure.WebJobs.Host.Protocols;
 
@@ -19,7 +18,7 @@ namespace AzureFuncSample.App.Binding
 
     public Task<IValueProvider> BindAsync(object value, ValueBindingContext context)
     {
-      if (value is UserEntity userEntity)
+      if (value != null && value is UserEntity userEntity)
       {
         return Task.FromResult<IValueProvider>(new AuthorizeValueProvider(userEntity));
       }
@@ -29,7 +28,7 @@ namespace AzureFuncSample.App.Binding
 
     public Task<IValueProvider> BindAsync(BindingContext context)
     {
-      if (context.BindingData["$request"] is HttpRequest httpRequest)
+      if (context.TryGetHttpRequest(out var httpRequest))
       {
         return Task.FromResult<IValueProvider>(new AuthorizeValueProvider(httpRequest));
       }

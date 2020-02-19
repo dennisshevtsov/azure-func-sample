@@ -9,6 +9,7 @@ namespace AzureFuncSample.App.Routes
     public const string UserResource = "user";
 
     public const string GetUsersRoute = UserRoutes.UserResource;
+    public const string GetCurrentUserRoute = UserRoutes.UserResource + "/me";
     public const string GetUserRoute = UserRoutes.UserResource + "/" + RouteParameterNames.IdParameterName;
     public const string PostUserRoute = UserRoutes.UserResource;
     public const string PutUserRoute = UserRoutes.UserResource + "/" + RouteParameterNames.IdParameterName;

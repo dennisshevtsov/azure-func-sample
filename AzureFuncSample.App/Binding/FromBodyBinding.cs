@@ -7,7 +7,6 @@ namespace AzureFuncSample.App.Binding
   using System;
   using System.Threading.Tasks;
   
-  using Microsoft.AspNetCore.Http;
   using Microsoft.Azure.WebJobs.Host.Bindings;
   using Microsoft.Azure.WebJobs.Host.Protocols;
 
@@ -21,11 +20,18 @@ namespace AzureFuncSample.App.Binding
     public bool FromAttribute => true;
 
     public Task<IValueProvider> BindAsync(object value, ValueBindingContext context)
-      => Task.FromResult<IValueProvider>(new FromBodyValueProvider(value));
+    {
+      if (value != null && value.GetType() == _bodyObjectType)
+      {
+        return Task.FromResult<IValueProvider>(new FromBodyValueProvider(value));
+      }
+
+      throw new InvalidOperationException();
+    }
 
     public Task<IValueProvider> BindAsync(BindingContext context)
     {
-      if (context.BindingData["$request"] is HttpRequest httpRequest)
+      if (context.TryGetHttpRequest(out var httpRequest))
       {
         return Task.FromResult<IValueProvider>(new FromBodyValueProvider(httpRequest, _bodyObjectType));
       }
