@@ -6,7 +6,7 @@ namespace AzureFuncSample.Runtime
 {
   using System;
 
-  public class ExecutionResult
+  public class ExecutionResult : IExecutionResult
   {
     protected ExecutionResult() { }
 
@@ -20,23 +20,14 @@ namespace AzureFuncSample.Runtime
 
     public string Error { get; }
 
-    public bool HasError => string.IsNullOrWhiteSpace(Error);
+    public bool HasError => Error != null;
 
     public static ExecutionResult Success() => new ExecutionResult();
 
+    public static ExecutionResult<T> Success<T>(T result) where T : class => new ExecutionResult<T>(result);
+
     public static ExecutionResult Fail(string error) => new ExecutionResult(error);
-  }
 
-  public sealed class ExecutionResult<T> : ExecutionResult where T : class
-  {
-    public ExecutionResult(T result) => Result = result ?? throw new ArgumentNullException(nameof(result));
-
-    public ExecutionResult(string error) : base(error) { }
-
-    public T Result { get; }
-
-    public static ExecutionResult<T> Success(T result) => new ExecutionResult<T>(result);
-
-    public static new ExecutionResult<T> Fail(string error) => new ExecutionResult<T>(error);
+    public static ExecutionResult<T> Fail<T>(string error) where T : class => new ExecutionResult<T>(error);
   }
 }
