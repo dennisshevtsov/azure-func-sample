@@ -12,7 +12,6 @@ namespace AzureFuncSample.App.Functions
   using Microsoft.Azure.WebJobs.Extensions.Http;
 
   using AzureFuncSample.App.Attributes;
-  using AzureFuncSample.App.Extensions;
   using AzureFuncSample.App.Http;
   using AzureFuncSample.App.Routes;
   using AzureFuncSample.Runtime;
